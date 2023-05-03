@@ -1,5 +1,6 @@
 from unit import BaseUnit
 
+
 class BaseSingleton(type):
     _instances = {}
 
