@@ -4,8 +4,7 @@ import random
 from abc import ABC, abstractmethod
 from equipment import Equipment, Weapon, Armor
 from classes import UnitClass
-from random import uniform
-from typing import Optional
+from random import uniform, randint
 
 
 class BaseUnit(ABC):
@@ -24,6 +23,11 @@ class BaseUnit(ABC):
         self.weapon: Weapon = Equipment().get_weapon(weapon_name='топорик')
         self.armor: Armor = Equipment().get_armor(armor_name='кожаная броня')
         self.is_skill_used: bool = False
+        self.text_list = [
+            [", используя", ", пробивает ", " соперника и наносит ", " урона."],
+            [", используя", ", наносит удар, но ", " cоперника его останавливает"],
+            [" попытался использовать ", ", но у него не хватило выносливости."]
+        ]
 
     @property
     def health_points(self):
@@ -66,29 +70,36 @@ class BaseUnit(ABC):
     def _count_stamina(self, stamina: float) -> None:
         self.stamina = round(self.stamina - stamina, 1)
 
-    def regenerate_stamina(self, stamina: float) -> None:
-        max_stamina = self.unit_class.max_stamina
-        if self.stamina + stamina > max_stamina > self.stamina:
-            self.stamina = max_stamina
-        elif self.stamina < max_stamina:
-            self.stamina += stamina
+    def regenerate_stamina(self, stamina_point: float) -> None:
+        stamina_growth: float = stamina_point * self.unit_class.stamina
+        if self.stamina + stamina_growth > self.unit_class.max_stamina:
+            self.stamina = self.unit_class.max_stamina
+        else:
+            self.stamina += stamina_growth
 
     def get_damage(self, damage: float) -> None:
         self.hp = round(self.hp - damage, 1)
 
-    def hit_enemy(self, target: BaseUnit) -> str:
+    @abstractmethod
+    def hit(self, target: BaseUnit) -> str:
         """
-        Функция удар игрока:
-        здесь происходит проверка достаточно ли выносливости для нанесения удара.
-        Вызывается функция self._count_damage(target)
-        а также возвращается результат в виде строки
+        Этот метод не будет переопределен ниже
         """
-        if self.stamina > self.weapon.stamina_per_hit * self.unit_class.stamina:
+        text_1 = self.text_list[0]
+        text_2 = self.text_list[1]
+        text_3 = self.text_list[2]
+
+        if self.stamina >= self.weapon.stamina_per_hit:
             damage = self._count_damage(target)
-            if damage:
-                return f"{self.name} используя {self.weapon.name} пробивает {target.armor.name} соперника и наносит {damage} урона."
-            return f"{self.name} используя {self.weapon.name} наносит удар, но {target.armor.name} cоперника его останавливает."
-        return f"{self.name} попытался использовать {self.weapon.name}, но у него не хватило выносливости."
+            damage = round(damage, 1)
+
+            if damage > 0:
+                return f"{self.name}{text_1[0]}{self.weapon.name}{text_1[1]}" \
+                       f" {target.armor.name}{text_1[2]}{damage}{text_1[2]}"
+            else:
+                return f"{self.name}{text_2[0]}{self.weapon.name}{text_2[0]}{target.armor.name}{text_2[2]}"
+        else:
+            return f"{self.name}{text_3[0]}{self.weapon.name}{text_3[1]}"
 
     def use_skill(self, target: BaseUnit) -> str:
         """
@@ -106,9 +117,20 @@ class BaseUnit(ABC):
 
 
 class PlayerUnit(BaseUnit):
-
     def hit(self, target: BaseUnit) -> str:
-        return self.hit_enemy(target)
+        """
+        Функция удар игрока:
+        здесь происходит проверка достаточно ли выносливости для нанесения удара.
+        Вызывается функция self._count_damage(target)
+        а также возвращается результат в виде строки
+        """
+        self.text_list = [
+            [", используя", ", пробивает ", " соперника и наносит ", " урона."],
+            [", используя", ", наносит удар, но ", " cоперника его останавливает"],
+            [" попытался использовать ", ", но у него не хватило выносливости."]
+        ]
+
+        return super().hit(target)
 
 
 class EnemyUnit(BaseUnit):
@@ -121,12 +143,13 @@ class EnemyUnit(BaseUnit):
         Если умение применено, противник наносит простой удар, где также используется
         функция _count_damage(target)
         """
-        rand_num = random.randint(1, 10)
+        if randint(1, 10) == 1 and not self.is_skill_used:
+            return self.use_skill(target)
 
-        if rand_num == 10:
-            if self.is_skill_used:
-                return self.hit_enemy(target)
-            else:
-                self.use_skill(target)
-        else:
-            return self.hit_enemy(target)
+        self.text_list = [
+            [", используя", ", пробивает ", " и наносит тебе ", " урона. "],
+            [", используя", ", наносит удар, но твоя", "его останавливает."],
+            [" попытался использовать ", ", но у него не хватило выносливости."]
+        ]
+
+        return super().hit(target)
