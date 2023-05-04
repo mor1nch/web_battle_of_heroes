@@ -25,4 +25,4 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           script: |
-            echo ${{ secrets.PASSWORD }} | sudo -S docker run -d -p 80:80 mor1nch/skypro_coursework_5:main-4883560428
+            echo ${{ secrets.PASSWORD }} | sudo -S docker run -d -p 80:80 mor1nch/skypro_coursework_5:main-4883695363
