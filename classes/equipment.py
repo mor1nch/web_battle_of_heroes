@@ -59,7 +59,6 @@ class Equipment:
         with open("./data/equipment.json", "r", encoding="utf-8") as equipment_file:
             data = json.load(equipment_file)
         equipment_schema = marshmallow_dataclass.class_schema(EquipmentData)
-        print(equipment_schema().load(data))
         try:
             return equipment_schema().load(data)
         except marshmallow.exceptions.ValidationError:

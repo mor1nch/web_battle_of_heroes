@@ -23,8 +23,8 @@ class BaseUnit(ABC):
         self.armor: Armor = Equipment().get_armor(armor_name='кожаная броня')
         self.is_skill_used: bool = False
         self.text_list = [
-            [", используя", ", пробивает ", " соперника и наносит ", " урона."],
-            [", используя", ", наносит удар, но ", " cоперника его останавливает"],
+            [", используя ", ", пробивает ", " соперника и наносит ", " урона."],
+            [", используя ", ", наносит удар, но ", " cоперника его останавливает"],
             [" попытался использовать ", ", но у него не хватило выносливости."]
         ]
 
@@ -93,12 +93,13 @@ class BaseUnit(ABC):
             damage = round(damage, 1)
 
             if damage > 0:
-                return f"{self.name}{text_1[0]}{self.weapon.name}{text_1[1]}" \
-                       f" {target.armor.name}{text_1[2]}{damage}{text_1[2]}"
+                self.get_damage(damage)
+                return f'{self.name}{text_1[0]}"{self.weapon.name}"{text_1[1]}' \
+                       f'"{target.armor.name}"{text_1[2]}{damage}{text_1[3]}'
             else:
-                return f"{self.name}{text_2[0]}{self.weapon.name}{text_2[0]}{target.armor.name}{text_2[2]}"
+                return f'{self.name}{text_2[0]}"{self.weapon.name}"{text_2[1]}"{target.armor.name}"{text_2[2]}'
         else:
-            return f"{self.name}{text_3[0]}{self.weapon.name}{text_3[1]}"
+            return f'{self.name}{text_3[0]}"{self.weapon.name}"{text_3[1]}'
 
     def use_skill(self, target: BaseUnit) -> str:
         """
@@ -124,8 +125,8 @@ class PlayerUnit(BaseUnit):
         а также возвращается результат в виде строки
         """
         self.text_list = [
-            [", используя", ", пробивает ", " соперника и наносит ", " урона."],
-            [", используя", ", наносит удар, но ", " cоперника его останавливает"],
+            [", используя ", ", пробивает ", " соперника и наносит ", " урона."],
+            [", используя ", ", наносит удар, но ", " cоперника его останавливает"],
             [" попытался использовать ", ", но у него не хватило выносливости."]
         ]
 
@@ -146,8 +147,8 @@ class EnemyUnit(BaseUnit):
             return self.use_skill(target)
 
         self.text_list = [
-            [", используя", ", пробивает ", " и наносит тебе ", " урона. "],
-            [", используя", ", наносит удар, но твоя", "его останавливает."],
+            [", используя ", ", пробивает ", " и наносит тебе ", " урона."],
+            [", используя ", ", наносит удар, но твоя ", " его останавливает."],
             [" попытался использовать ", ", но у него не хватило выносливости."]
         ]
 

@@ -27,13 +27,13 @@ class Arena(metaclass=BaseSingleton):
     def _check_players_hp(self) -> Optional[str]:
         if self.player.hp <= 0:
             self.game_result = "Удача оказалась не на твоей стороне, ты проиграл.\nПопробуй ещё раз."
-            return self._end_game()
+            return self.end_game()
         elif self.enemy.hp <= 0:
             self.game_result = "Противник повержен, ты победил!"
-            return self._end_game()
+            return self.end_game()
         elif self.player.hp <= 0 and self.enemy.hp <= 0:
             self.game_result = "Оба бойца пали, ничья"
-            return self._end_game()
+            return self.end_game()
 
     def _stamina_regeneration(self) -> None:
         self.player.regenerate_stamina(self.STAMINA_PER_ROUND)
@@ -47,7 +47,7 @@ class Arena(metaclass=BaseSingleton):
         result = self.enemy.hit(self.player)
         return result
 
-    def _end_game(self) -> str:
+    def end_game(self) -> str:
         self.game_is_running = False
         return self.game_result
 
