@@ -1,0 +1,7 @@
+version: "3.9"
+
+services:
+  app:
+    image: mor1nch/skypro_coursework_5:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+    ports:
+      - 80:80
