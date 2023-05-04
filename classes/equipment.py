@@ -56,9 +56,10 @@ class Equipment:
 
     @staticmethod
     def _get_equipment_data() -> EquipmentData:
-        equipment_file = open("../data/equipment.json")
-        data = json.load(equipment_file)
+        with open("./data/equipment.json", "r", encoding="utf-8") as equipment_file:
+            data = json.load(equipment_file)
         equipment_schema = marshmallow_dataclass.class_schema(EquipmentData)
+        print(equipment_schema().load(data))
         try:
             return equipment_schema().load(data)
         except marshmallow.exceptions.ValidationError:

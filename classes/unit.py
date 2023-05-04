@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-import random
 from abc import ABC, abstractmethod
-from equipment import Equipment, Weapon, Armor
-from classes import UnitClass
+from classes.equipment import Equipment, Weapon, Armor
+from classes.classes import UnitClass
 from random import uniform, randint
 
 

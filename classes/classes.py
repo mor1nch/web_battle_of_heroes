@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from skills import Skill, FuryPunch, HardShot
+from classes.skills import Skill, FuryPunch, HardShot
 
 
 @dataclass

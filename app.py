@@ -1,17 +1,23 @@
+from flask import Flask, render_template, request, redirect, url_for
+
+from classes.equipment import Equipment
+from classes.unit import PlayerUnit, EnemyUnit
+from classes.base import Arena
+from classes.classes import WarriorClass, ThiefClass, unit_classes
+
 app = Flask(__name__)
 
 heroes = {
-    "player": BaseUnit,
-    "enemy": BaseUnit
+    "player": PlayerUnit(name="Игрок", unit_class=WarriorClass),
+    "enemy": EnemyUnit(name="Противник", unit_class=ThiefClass),
 }
 
-arena =  ... # TODO инициализируем класс арены
+arena: Arena = Arena()
 
 
 @app.route("/")
 def menu_page():
-    # TODO рендерим главное меню (шаблон index.html)
-    pass
+    return render_template("index.html")
 
 
 @app.route("/fight/")
@@ -19,6 +25,7 @@ def start_fight():
     # TODO выполняем функцию start_game экземпляра класса арена и передаем ему необходимые аргументы
     # TODO рендерим экран боя (шаблон fight.html)
     pass
+
 
 @app.route("/fight/hit")
 def hit():
